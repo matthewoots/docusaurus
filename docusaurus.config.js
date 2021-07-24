@@ -6,7 +6,7 @@ module.exports = {
   onBrokenLinks: 'ignore', // throw
   favicon: 'img/logo.png',
   organizationName: 'matthewoots', // Usually your GitHub org/user name.
-  projectName: 'matthewoots.github.io', // Usually your repo name.
+  projectName: 'docusaurus', // Usually your repo name.
   themeConfig: {
     colorMode: {
       defaultMode: 'dark',
