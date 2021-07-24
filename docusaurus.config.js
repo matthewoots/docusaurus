@@ -1,3 +1,8 @@
+const math = require('remark-math');
+const katex = require('rehype-katex');
+const lightCodeTheme = require('prism-react-renderer/themes/github');
+const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+
 module.exports = {
   title: 'Personal Research & Development',
   tagline: 'Documentation Website',
@@ -7,7 +12,20 @@ module.exports = {
   favicon: 'img/logo.png',
   organizationName: 'matthewoots', // Usually your GitHub org/user name.
   projectName: 'docusaurus', // Usually your repo name.
+  stylesheets: [    
+    {      
+      href: 'https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css',      
+      integrity:        
+        'sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc',      
+      crossorigin: 'anonymous',    
+    },  
+  ],
+  
   themeConfig: {
+    prism: {
+      additionalLanguages: ['cpp'],
+      theme: require('prism-react-renderer/themes/github'),
+    },
     colorMode: {
       defaultMode: 'light',
       disableSwitch: true,
@@ -124,6 +142,9 @@ module.exports = {
           // Please change this to your repo.
           editUrl:
             'https://github.com/facebook/docusaurus/edit/master/website/',
+          showLastUpdateTime: true,
+          remarkPlugins: [math],          
+          rehypePlugins: [katex],
         },
         blog: {
           showReadingTime: true,
