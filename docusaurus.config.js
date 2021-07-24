@@ -1,8 +1,8 @@
 module.exports = {
   title: 'Personal Research & Development',
   tagline: 'Documentation Website',
-  url: 'https://matthewoots.github.io/docusaurus/',
-  baseUrl: '/',
+  url: 'https://matthewoots.github.io',
+  baseUrl: '/docusaurus/',
   onBrokenLinks: 'ignore', // throw
   favicon: 'img/logo.png',
   organizationName: 'matthewoots', // Usually your GitHub org/user name.
