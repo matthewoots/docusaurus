@@ -1,7 +1,7 @@
 module.exports = {
   title: 'Personal Research & Development',
   tagline: 'Documentation Website',
-  url: 'https://github.com/matthewoots',
+  url: 'https://matthewoots.github.io/docusaurus/',
   baseUrl: '/',
   onBrokenLinks: 'ignore', // throw
   favicon: 'img/logo.png',
