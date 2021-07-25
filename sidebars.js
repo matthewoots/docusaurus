@@ -15,7 +15,8 @@ module.exports = {
     Introduction: ['px4-autopilot/introduction/intro'],
   },
   MotionPlanningSidebar: {
-    Introduction: ['motion-planning/introduction/intro','motion-planning/introduction/minsnaptrajectory'],
+    Introduction: ['motion-planning/introduction/intro','motion-planning/introduction/trajectory'],
+    'ZJU-FAST-Lab': ['motion-planning/ZJU-FAST-Lab/minsnaptrajectory']
   },
   GazeboSidebar: {
     Introduction: ['gazebo/introduction/intro'],
