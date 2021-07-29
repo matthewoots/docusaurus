@@ -3,9 +3,19 @@
 This website is built using [Docusaurus 2](https://v2.docusaurus.io/), a modern static website generator.
 
 ### Installation
+For changing NodeJS version to >= 12.13.0, you can refer to https://phoenixnap.com/kb/update-node-js-version
+```bash
+sudo apt update
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+source ~/.bashrc
+nvm --version #Check NVM version
+nvm ls-remote #Will display all the available versions
+nvm install 12.13.0
+node --version #Check NodeJS version
+```
 
 ```
-$ yarn
+$ yarn install
 ```
 
 ### Local Development
