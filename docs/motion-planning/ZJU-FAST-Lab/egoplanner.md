@@ -35,6 +35,7 @@ Variable and notations are displayed in the table below :
 :::note
 Seems like the $v_{ij}$ is a normal to the tangent of the trajectory curve at $Q_i$
 :::
+{$p,v$}$_j$ is perpendicular to a tangent vector $R$ which is the tangent vector of the UAV at point $Q_i$ - But we must know that since its **perpendicular to the tangent vector**, it can be assumed as a plane with the z vector hence there are $ij$ where $j$ can be a sweep of the plane.
 
 Hence a criteria must be that the obstacle distance is negative (which means that the control point is not "inside" the obstacle, meaning a collision-free control point $Q_i$) &nbsp &nbsp $d_{ij} \le 0$.   
 
@@ -117,6 +118,32 @@ return cost;
 }
 ```
 
+To identify the total cost, the function is  `BsplineOptimizer::combineCostRebound()`
+```cpp
+void BsplineOptimizer::combineCostRebound(const double *x, double *grad, double &f_combine, const int n)
+  {
+
+    memcpy(cps_.points.data() + 3 * order_, x, n * sizeof(x[0]));
+
+    /* ---------- evaluate cost and gradient ---------- */
+    double f_smoothness, f_distance, f_feasibility;
+
+    Eigen::MatrixXd g_smoothness = Eigen::MatrixXd::Zero(3, cps_.size);
+    Eigen::MatrixXd g_distance = Eigen::MatrixXd::Zero(3, cps_.size);
+    Eigen::MatrixXd g_feasibility = Eigen::MatrixXd::Zero(3, cps_.size);
+
+    calcSmoothnessCost(cps_.points, f_smoothness, g_smoothness);
+    calcDistanceCostRebound(cps_.points, f_distance, g_distance, iter_num_, f_smoothness);
+    calcFeasibilityCost(cps_.points, f_feasibility, g_feasibility);
+
+    f_combine = lambda1_ * f_smoothness + new_lambda2_ * f_distance + lambda3_ * f_feasibility;
+    //printf("origin %f %f %f %f\n", f_smoothness, f_distance, f_feasibility, f_combine);
+
+    Eigen::MatrixXd grad_3D = lambda1_ * g_smoothness + new_lambda2_ * g_distance + lambda3_ * g_feasibility;
+    memcpy(grad, grad_3D.data() + 3 * order_, n * sizeof(grad[0]));
+  }
+```
+
 ### Smoothness Penalty
 
 ```cpp
@@ -140,15 +167,19 @@ calcDistanceCostRebound(cps_.points, f_distance, g_distance, iter_num_, f_smooth
 ```
 The collision penalty is used to push controls away (obstacle free control points), ZJU adopted safety clearance $s_f$ and punishing control points with $d_{ij}$
 $$
-j_c(i,j) = \left \{ \begin{array}{lll} 0 \quad \quad \quad (c_{ij} \le 0) \\ c_{ij}^3 \quad \quad \quad(0 < c_{ij} \le s_{f}) \\ 3s_fc_{ij}^2 - 3s_f^2c_{ij} +s_f^3 \quad (c_{ij} > s_{f}) \end{array} \right. 
+j_c(i,j) = \left \{ \begin{array}{lll} 0 \quad \quad \quad \quad \quad (c_{ij} \le 0) \\ c_{ij}^3 \quad \quad \quad \quad \quad (0 < c_{ij} \le s_{f}) \\ 3s_fc_{ij}^2 - 3s_f^2c_{ij} +s_f^3 \quad (c_{ij} > s_{f}) \end{array} \right. 
 $$
 $$
 c_{i,j} = s_f - d_{ij}
 $$
 
-Combining costs on all $Q_i$ yields the total cost $J_c$:
+We can see $j_c(i,j)$ as a cost value produced by the ${p,v}_j$ pairs on $Q_i$. This is due to the **p,v** that is produced when the naive guess passes into an obstacle.
+
+The cost on each $Q_i$s are evaluated independently and accumulated from all corresponding {$p,v$}$_j$ pairs. (In other words a summation $\sum$. Where $j$ represents the **sweeping** of the z plane. 
+
+Combining costs on all $Q_i$ yields the **total cost** $J_c$, we can get the following formula : 
 $$
-J_c = \sum_{i = 1}^{N_c}j_c(Q_i)
+J_c = \sum_{i = 1}^{N_c}j_c(Q_i) \quad \quad \quad where \quad j_c(Q_i) = \sum_{j=1}^{N_p}j_c(i,j)
 $$
 
 ### Feasibility Penalty
